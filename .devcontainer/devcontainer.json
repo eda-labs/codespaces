@@ -27,7 +27,8 @@
                         "kcUsername": "admin",
                         "kcPassword": "admin",
                         "skipTlsVerify": true,
-                        "coreNamespace": "eda-system"
+                        "coreNamespace": "eda-system",
+                        "context": "k3d-eda-demo"
                     }
                 }
             }
