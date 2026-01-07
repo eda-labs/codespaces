@@ -18,7 +18,19 @@
             "extensions": [
                 "ms-kubernetes-tools.vscode-kubernetes-tools",
                 "eda-labs.vscode-eda"
-            ]
+            ],
+            "settings": {
+                "vscode-eda.edaTargets": {
+                    "https://127.0.0.1:9443": {
+                        "edaUsername": "admin",
+                        "edaPassword": "admin",
+                        "kcUsername": "admin",
+                        "kcPassword": "admin",
+                        "skipTlsVerify": true,
+                        "coreNamespace": "eda-system"
+                    }
+                }
+            }
         }
     },
     "onCreateCommand": ".devcontainer/onCreate.sh",
