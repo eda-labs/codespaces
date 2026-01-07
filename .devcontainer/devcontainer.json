@@ -1,0 +1,49 @@
+{
+    "name": "Nokia EDA in GitHub Codespaces",
+    "image": "ghcr.io/eda-labs/eda-devcontainer:latest",
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {
+            "version": "latest",
+            "dockerDashComposeVersion": "v2"
+        },
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "installZsh": true,
+            "configureZshAsDefaultShell": true,
+            "installOhMyZsh": true,
+            "upgradePackages": true
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-kubernetes-tools.vscode-kubernetes-tools",
+                "eda-labs.vscode-eda"
+            ]
+        }
+    },
+    "onCreateCommand": ".devcontainer/onCreate.sh",
+    "postCreateCommand": ".devcontainer/postCreate.sh",
+    "postAttachCommand": ".devcontainer/postAttach.sh",
+    "containerEnv": {
+        "EDA_PORT": "9443",
+        "EDA_VERSION": "25-12-1",
+        "EDA_PLAYGROUND_REPO": "kaelemc/playground",
+        "EDA_PLAYGROUND_DIR": "/home/vscode/.playground"
+    },
+    "forwardPorts": [
+        9443
+    ],
+    "portsAttributes": {
+        "9443": {
+            "protocol": "https",
+            "label": "EDA UI"
+        }
+    },
+    "hostRequirements": {
+        "cpus": 4,
+        "memory": "16gb",
+        "storage": "30gb"
+    },
+    "privileged": true,
+    "remoteUser": "vscode"
+}
