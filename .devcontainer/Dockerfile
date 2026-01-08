@@ -9,7 +9,7 @@ ENV EDA_VERSION=${EDA_VERSION//./-}
 ENV EDA_PLAYGROUND_REPO=$EDA_PLAYGROUND_REPO
 ENV EDA_PLAYGROUND_DIR=$EDA_PLAYGROUND_DIR
 
-RUN apt-get update && apt-get install --no-install-recommends -y \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install --no-install-recommends -y \
     make \
     git \
     ca-certificates \
@@ -17,18 +17,21 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     jq \
     btop \
     sudo \
+    zsh \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m -s /bin/zsh vscode && \
-    usermod -aG sudo vscode && \
+    groupadd -f docker && \
+    usermod -aG sudo,docker vscode && \
     echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/vscode && \
     chmod 0440 /etc/sudoers.d/vscode
 
 COPY --chmod=755 scripts/ /usr/local/bin/.
 
-RUN curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+RUN curl -fsSL --retry 3 https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=v5.8.3 bash
 
-RUN echo "export PATH=$PATH:$EDA_PLAYGROUND_DIR/tools" >> /etc/profile
+# Add EDA Playground tools to PATH (zsh)
+RUN echo 'export PATH="$PATH:$EDA_PLAYGROUND_DIR/tools"' >> /etc/zsh/zshrc
 
 USER vscode
 
