@@ -38,10 +38,7 @@
     "postCreateCommand": ".devcontainer/postCreate.sh",
     "postAttachCommand": ".devcontainer/postAttach.sh",
     "containerEnv": {
-        "EDA_PORT": "9443",
-        "EDA_VERSION": "25-12-1",
-        "EDA_PLAYGROUND_REPO": "kaelemc/playground",
-        "EDA_PLAYGROUND_DIR": "/home/vscode/.playground"
+        "EDA_PORT": "9443"
     },
     "forwardPorts": [
         9443
