@@ -27,6 +27,7 @@ RUN useradd -m -s /bin/zsh vscode && \
     chmod 0440 /etc/sudoers.d/vscode
 
 COPY --chmod=755 scripts/ /usr/local/bin/.
+COPY codespaces-4vcpu-kpt-setters.yaml /tmp/codespaces-4vcpu-kpt-setters.yaml
 
 RUN curl -fsSL --retry 3 https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=v5.8.3 bash
 
