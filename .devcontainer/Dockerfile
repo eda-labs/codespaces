@@ -18,6 +18,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install --no-instal
     btop \
     sudo \
     zsh \
+    iproute2 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m -s /bin/zsh vscode && \
