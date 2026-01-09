@@ -46,7 +46,8 @@
     "portsAttributes": {
         "9443": {
             "protocol": "https",
-            "label": "EDA UI"
+            "label": "EDA UI",
+            "onAutoForward": "openBrowser"
         }
     },
     "hostRequirements": {
