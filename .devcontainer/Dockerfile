@@ -51,7 +51,7 @@ RUN curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
 
 # copy shell files (save .zshrc as .zshrc.custom to survive devcontainer features overwriting it)
 COPY --chown=vscode:vscode shell/ /home/vscode/
-COPY --chown=vscode:vscode shell/.zshrc /home/vscode/.zshrc.custom
+COPY --chown=vscode:vscode shell/.zshrc /home/vscode/.zshrc
 COPY --chown=vscode:vscode shell/starship.toml /home/vscode/.config/starship.toml
 
 RUN bash -c "/home/vscode/install-zsh-plugins.sh"
