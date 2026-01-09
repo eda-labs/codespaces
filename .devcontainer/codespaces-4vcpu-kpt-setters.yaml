@@ -33,3 +33,5 @@ data:
   SE_REQ_CPU: 10m
   SA_REQ_CPU: 10m
   SC_REQ_CPU: 10m
+
+  GOGS_PV_CLAIM_SIZE: 5Gi
