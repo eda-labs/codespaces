@@ -28,3 +28,8 @@ data:
   NPP_REQ_CPU: 10m
   # TestMan
   TM_REQ_CPU: 10m
+
+  CX_REQ_CPU: 10m
+  SE_REQ_CPU: 10m
+  SA_REQ_CPU: 10m
+  SC_REQ_CPU: 10m
