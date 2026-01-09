@@ -7,9 +7,9 @@
             "dockerDashComposeVersion": "v2"
         },
         "ghcr.io/devcontainers/features/common-utils:2": {
-            "installZsh": true,
+            // "installZsh": true,
             "configureZshAsDefaultShell": true,
-            "installOhMyZsh": true,
+            // "installOhMyZsh": true,
             "upgradePackages": true
         }
     },

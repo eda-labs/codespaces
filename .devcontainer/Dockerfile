@@ -45,3 +45,12 @@ SHELL ["/bin/bash", "-c"]
 RUN SRL=$(curl -s "https://raw.githubusercontent.com/nokia-eda/playground/refs/heads/main/topology/3-nodes-srl.yaml" | $EDA_PLAYGROUND_DIR/tools/yq '.spec.nodeTemplates | filter(.name == "default").[].nodeProfile'); \
     curl "https://raw.githubusercontent.com/nokia-eda/kpt/refs/heads/main/eda-kpt-playground/$SRL/engine_v1_nodeprofile_srlinux_${SRL//[^0-9.]/}.yaml" | \
     $EDA_PLAYGROUND_DIR/tools/yq '.spec.containerImage' >> $HOME/.images.txt
+
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+RUN curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
+
+# copy shell files
+COPY shell/ /home/vscode
+COPY shell/starship.toml /home/vscode/.config/starship.toml
+
+RUN bash -c "/home/vscode/install-zsh-plugins.sh"
