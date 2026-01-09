@@ -26,3 +26,11 @@ fpath=(~/.oh-my-zsh/custom/completions $fpath)
 eval "$(starship init zsh)"
 
 source /home/vscode/edactl_completion.zsh
+
+# locale -a shows available locales
+# in vscode it was C UTF-8
+export LOCALE="C.UTF-8"
+
+alias edactl='kubectl -n eda-system exec -it $(kubectl -n eda-system get pods \
+-l eda.nokia.com/app=eda-toolbox -o jsonpath="{.items[0].metadata.name}") \
+-- edactl'
