@@ -1,6 +1,6 @@
 {
     "name": "Nokia EDA in GitHub Codespaces",
-    "image": "ghcr.io/eda-labs/eda-devcontainer:latest",
+    "image": "ghcr.io/eda-labs/codespaces/base:pr-1",
     "features": {
         "ghcr.io/devcontainers/features/docker-in-docker:2": {
             "version": "latest",
@@ -46,7 +46,8 @@
     "portsAttributes": {
         "9443": {
             "protocol": "https",
-            "label": "EDA UI"
+            "label": "EDA UI",
+            "onAutoForward": "openBrowser"
         }
     },
     "hostRequirements": {
