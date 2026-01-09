@@ -51,7 +51,7 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          # context: ${{ env.CONTEXT }}
+          context: ${{ env.CONTEXT }}
           file: ${{ env.DOCKERFILE }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
