@@ -39,3 +39,8 @@ RUN git clone --depth 1 "https://github.com/$EDA_PLAYGROUND_REPO" $EDA_PLAYGROUN
 
 RUN curl -o $HOME/.bundle.yaml "https://raw.githubusercontent.com/nokia-eda/edaadm/refs/heads/main/bundles/eda-bundle-core-$EDA_VERSION.yaml" && \
     $EDA_PLAYGROUND_DIR/tools/yq '.assets.registries[] | .name as $reg | .images[] | .name as $img | .tags[] | $reg + "/" + $img + ":" + .' $HOME/.bundle.yaml > $HOME/.images.txt
+
+SHELL ["/bin/bash", "-c"]
+RUN SRL=$(curl -s "https://raw.githubusercontent.com/nokia-eda/playground/refs/heads/main/topology/3-nodes-srl.yaml" | $EDA_PLAYGROUND_DIR/tools/yq '.spec.nodeTemplates | filter(.name == "default").[].nodeProfile'); \
+    curl "https://raw.githubusercontent.com/nokia-eda/kpt/refs/heads/main/eda-kpt-playground/$SRL/engine_v1_nodeprofile_srlinux_${SRL//[^0-9.]/}.yaml" | \
+    $EDA_PLAYGROUND_DIR/tools/yq '.spec.containerImage' >> $HOME/.images.txt
