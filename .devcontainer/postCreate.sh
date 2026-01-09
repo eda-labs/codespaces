@@ -1,6 +1,9 @@
 #!/bin/bash
 source .devcontainer/utils.sh
 
+# Restore custom .zshrc after devcontainer features may have overwritten it
+cp /home/vscode/.zshrc.custom /home/vscode/.zshrc 2>/dev/null || true
+
 cd $EDA_PLAYGROUND_DIR
 
 ensure-docker-is-ready
