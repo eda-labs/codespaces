@@ -1,9 +1,9 @@
 name: Build Devcontainer Image
 
 on:
-  push:
-    # branches:
-    #   - "*"
+  # push:
+  # branches:
+  #   - "*"
   pull_request:
     branches:
       - "*"
@@ -14,6 +14,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ghcr.io/eda-labs/codespaces-base
   DOCKERFILE: .devcontainer/Dockerfile
+  CONTEXT: .devcontainer/
 
 jobs:
   build:
