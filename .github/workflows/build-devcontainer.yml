@@ -41,8 +41,7 @@ jobs:
           images: |
             ${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
-            type=ref,event=tag
+            type=ref
             type=sha
 
       - name: Build and push image
