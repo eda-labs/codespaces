@@ -5,12 +5,6 @@
         "ghcr.io/devcontainers/features/docker-in-docker:2": {
             "version": "latest",
             "dockerDashComposeVersion": "v2"
-        },
-        "ghcr.io/devcontainers/features/common-utils:2": {
-            // "installZsh": true,
-            "configureZshAsDefaultShell": true,
-            // "installOhMyZsh": true,
-            "upgradePackages": true
         }
     },
     "customizations": {
@@ -20,6 +14,12 @@
                 "eda-labs.vscode-eda"
             ],
             "settings": {
+                "terminal.integrated.defaultProfile.linux": "zsh",
+                "terminal.integrated.profiles.linux": {
+                    "zsh": {
+                        "path": "/bin/zsh"
+                    }
+                },
                 "vscode-eda.edaTargets": {
                     "https://127.0.0.1:9443": {
                         "edaUsername": "admin",
