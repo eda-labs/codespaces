@@ -9,7 +9,7 @@ name: Build Devcontainer Image
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ghcr.io/eda-labs/codespaces-base
+  IMAGE_NAME: ghcr.io/eda-labs/codespaces/base
   DOCKERFILE: .devcontainer/Dockerfile
   CONTEXT: .devcontainer/
 
@@ -31,7 +31,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
+          username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Docker meta
