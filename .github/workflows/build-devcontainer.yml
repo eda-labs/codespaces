@@ -1,14 +1,11 @@
 name: Build Devcontainer Image
 
-on:
-  # push:
-  # branches:
-  #   - "*"
+"on":
   pull_request:
-    branches:
-      - "*"
+  workflow_dispatch:
   release:
-    types: [published]
+    types:
+      - published
 
 env:
   REGISTRY: ghcr.io
@@ -20,9 +17,9 @@ jobs:
   build:
     name: Build and Push
     runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-      packages: write
+    # permissions:
+    #   contents: read
+    #   packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
