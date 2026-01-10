@@ -8,7 +8,7 @@ _edactl() {
     
     # Get completion from edactl
     local cobra_output
-    cobra_output=$("$HOME/.local/bin/edactl" __complete "${words[@]:1}" 2>/dev/null)
+    cobra_output=$("/usr/local/bin/edactl" __complete "${words[@]:1}" 2>/dev/null)
     
     if [[ -n "$cobra_output" ]]; then
         # Filter out directive lines and process completions
