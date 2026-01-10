@@ -25,7 +25,7 @@ fpath=(~/.oh-my-zsh/custom/completions $fpath)
 
 eval "$(starship init zsh)"
 
-source /home/vscode/edactl_completion.zsh
+source "$HOME/edactl_completion.zsh"
 
 # locale -a shows available locales
 # in vscode it was C UTF-8
