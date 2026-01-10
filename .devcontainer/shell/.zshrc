@@ -28,6 +28,6 @@ eval "$(starship init zsh)"
 source "$HOME/edactl_completion.zsh"
 
 # locale -a shows available locales
-# in vscode it was C UTF-8
+# in vscode it was C.UTF-8
 export LOCALE="C.UTF-8"
 

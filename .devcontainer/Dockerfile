@@ -56,7 +56,6 @@ RUN curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
 
 # copy shell files
 COPY --chown=vscode:vscode shell/ /home/vscode/
-COPY --chown=vscode:vscode shell/.zshrc /home/vscode/.zshrc
 COPY --chown=vscode:vscode shell/starship.toml /home/vscode/.config/starship.toml
 
 # edactl wrapper
