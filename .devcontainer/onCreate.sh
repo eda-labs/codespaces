@@ -12,6 +12,7 @@ TOKEN=$($EDA_PLAYGROUND_DIR/tools/yq -o=json '.assets.registries[].auth' $HOME/.
 ensure-docker-is-ready
 
 k3d cluster create eda-demo \
+    --image rancher/k3s:v1.34.1-k3s1
     --k3s-arg "--disable=traefik@server:*" \
     --k3s-arg "--disable=servicelb@server:*" \
     --volume "$HOME/.images.txt:/opt/images.txt@server:*" \
