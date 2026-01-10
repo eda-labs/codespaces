@@ -21,49 +21,80 @@ function run-with-inactivity-timeout {
         attempt=$((attempt + 1))
         echo "=== Attempt $attempt/$max_retries: ${cmd[*]} ==="
         
-        # Create a temp file to track last output time
-        local last_output_file=$(mktemp)
-        date +%s > "$last_output_file"
+        # Create a temp file to track last output time (using file modification time)
+        local marker_file=$(mktemp)
         
-        # Run command in background, updating timestamp on each output line
-        ("${cmd[@]}" 2>&1) | while IFS= read -r line; do
-            echo "$line"
-            date +%s > "$last_output_file"
-        done &
-        local pipe_pid=$!
+        # Run command, update marker file on each output line
+        # Use process substitution to avoid subshell issues
+        local cmd_pid
+        "${cmd[@]}" 2>&1 &
+        cmd_pid=$!
         
-        # Monitor for inactivity
-        while kill -0 $pipe_pid 2>/dev/null; do
-            sleep 5
-            local last_output=$(cat "$last_output_file")
-            local now=$(date +%s)
-            local idle_time=$((now - last_output))
-            
-            if [ $idle_time -ge $timeout_seconds ]; then
-                echo ""
-                echo "=== No output for ${idle_time}s (timeout: ${timeout_seconds}s). Restarting... ==="
-                # Kill the pipeline and any child processes
-                pkill -P $pipe_pid 2>/dev/null
-                kill $pipe_pid 2>/dev/null
-                wait $pipe_pid 2>/dev/null
-                rm -f "$last_output_file"
+        # Process output in background, touching marker file on each line
+        {
+            while IFS= read -r line; do
+                echo "$line"
+                touch "$marker_file"
+            done < <(tail -f /proc/$cmd_pid/fd/1 2>/dev/null || cat /proc/$cmd_pid/fd/1 2>/dev/null)
+        } 2>/dev/null &
+        local reader_pid=$!
+        
+        # Alternative: simpler approach using a FIFO
+        kill $reader_pid 2>/dev/null
+        
+        # Use a named pipe for reliable output tracking
+        local fifo=$(mktemp -u)
+        mkfifo "$fifo"
+        
+        # Run command with output to fifo
+        ("${cmd[@]}" 2>&1; echo "___CMD_DONE___") > "$fifo" &
+        cmd_pid=$!
+        
+        local timed_out=false
+        local cmd_finished=false
+        
+        # Read from fifo with timeout checks
+        while true; do
+            # Read with timeout using read -t
+            if IFS= read -r -t "$timeout_seconds" line < "$fifo"; then
+                if [ "$line" = "___CMD_DONE___" ]; then
+                    cmd_finished=true
+                    break
+                fi
+                echo "$line"
+            else
+                # Timeout occurred
+                timed_out=true
                 break
             fi
         done
         
-        # Check if command completed successfully
-        if wait $pipe_pid 2>/dev/null; then
-            rm -f "$last_output_file"
-            echo "=== Command completed successfully ==="
-            return 0
+        # Cleanup
+        rm -f "$fifo" "$marker_file"
+        
+        if [ "$cmd_finished" = true ]; then
+            # Wait for command and check exit status
+            if wait $cmd_pid 2>/dev/null; then
+                echo "=== Command completed successfully ==="
+                return 0
+            else
+                echo "=== Command failed with non-zero exit ==="
+                return 1
+            fi
         fi
         
-        rm -f "$last_output_file"
-        
-        # If we're here due to timeout, continue to next attempt
-        if [ $attempt -lt $max_retries ]; then
-            echo "=== Retrying in 5 seconds... ==="
-            sleep 5
+        if [ "$timed_out" = true ]; then
+            echo ""
+            echo "=== No output for ${timeout_seconds}s. Restarting... ==="
+            # Kill the command and all its children
+            pkill -P $cmd_pid 2>/dev/null
+            kill $cmd_pid 2>/dev/null
+            wait $cmd_pid 2>/dev/null
+            
+            if [ $attempt -lt $max_retries ]; then
+                echo "=== Retrying in 5 seconds... ==="
+                sleep 5
+            fi
         fi
     done
     
