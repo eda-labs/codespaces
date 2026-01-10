@@ -49,16 +49,16 @@ function run-with-inactivity-timeout {
                 echo ""
                 echo "=== No output for ${idle_time}s (timeout: ${timeout_seconds}s). Restarting... ==="
                 
+                # Forcefully kill (-9) for immediate termination
                 # Kill the entire process group
-                kill -- -$pipe_pid 2>/dev/null || true
+                kill -9 -- -$pipe_pid 2>/dev/null || true
                 # Kill by parent
-                pkill -P $pipe_pid 2>/dev/null || true
+                pkill -9 -P $pipe_pid 2>/dev/null || true
                 # Direct kill
-                kill $pipe_pid 2>/dev/null || true
+                kill -9 $pipe_pid 2>/dev/null || true
                 # Kill any remaining make/kpt processes from this session
-                pkill -f "kpt live apply" 2>/dev/null || true
+                pkill -9 -f "kpt live apply" 2>/dev/null || true
                 
-                sleep 2
                 break
             fi
         done
