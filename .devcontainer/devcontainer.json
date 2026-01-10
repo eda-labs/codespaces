@@ -10,6 +10,7 @@
     "customizations": {
         "vscode": {
             "extensions": [
+                "zongou.vs-seti-jetbrainsmononerdfont",
                 "ms-kubernetes-tools.vscode-kubernetes-tools",
                 "eda-labs.vscode-eda"
             ],
@@ -20,7 +21,9 @@
                         "path": "/bin/zsh"
                     }
                 },
-                "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font, JetBrainsMono, JetBrains Mono, Fira Code Nerd Font, FiraCode Nerd Font, Fira Code, Hasklig, Menlo, Monaco, 'Courier New', monospace",
+                "editor.fontLigatures": true,
+                "terminal.integrated.fontLigatures.enabled": true,
+                "terminal.integrated.fontFamily": "'JetBrainsMonoNL Nerd Font Mono', 'JetBrainsMonoNL Nerd Font', 'JetBrainsMono Nerd Font Mono', 'JetBrainsMono Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
                 "vscode-eda.edaTargets": {
                     "https://127.0.0.1:9443": {
                         "edaUsername": "admin",
