@@ -41,10 +41,7 @@ RUN echo 'export PATH="$PATH:$EDA_PLAYGROUND_DIR/tools"' >> /etc/zsh/zshrc
 
 USER vscode
 
-# patching kpt version to beta59 to see if it is better in handling sporadic k8s
-# issues in GH codespaces where beta57 is stuck in reading the reconciled resources.
-RUN git clone --depth 1 "https://github.com/$EDA_PLAYGROUND_REPO" $EDA_PLAYGROUND_DIR && cd $EDA_PLAYGROUND_DIR && \
-    sed -i 's/KPT_VERSION ?= v1.0.0-beta.57/KPT_VERSION ?= v1.0.0-beta.59/' Makefile && \
+RUN git clone --depth 1 --branch v0.0.1 "https://github.com/$EDA_PLAYGROUND_REPO" $EDA_PLAYGROUND_DIR && cd $EDA_PLAYGROUND_DIR && \
     make download-tools
 
 RUN curl -o $HOME/.bundle.yaml "https://raw.githubusercontent.com/nokia-eda/edaadm/refs/heads/main/bundles/eda-bundle-core-$EDA_VERSION.yaml" && \

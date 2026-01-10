@@ -1,6 +1,6 @@
 {
     "name": "Nokia EDA in GitHub Codespaces",
-    "image": "ghcr.io/eda-labs/codespaces/base:main",
+    "image": "ghcr.io/eda-labs/codespaces/base:kaelem-test",
     "features": {
         "ghcr.io/devcontainers/features/docker-in-docker:2": {
             "version": "latest",
@@ -10,17 +10,19 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                // "ms-kubernetes-tools.vscode-kubernetes-tools",
+                "entuent.fira-code-nerd-font",
+                "ms-kubernetes-tools.vscode-kubernetes-tools",
                 "eda-labs.vscode-eda"
             ],
             "settings": {
+                "chat.disableAIFeatures": true,
                 "terminal.integrated.defaultProfile.linux": "zsh",
                 "terminal.integrated.profiles.linux": {
                     "zsh": {
                         "path": "/bin/zsh"
                     }
                 },
-                "terminal.integrated.fontFamily": "'JetBrainsMono Nerd Font', 'JetBrainsMono NF', monospace",
+                "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font, JetBrainsMono, JetBrains Mono, fira-code-nerd, Fira Code Nerd Font, FiraCode Nerd Font, Fira Code, Consolas, Hasklig, Menlo, Monaco, 'Courier New', monospace",
                 "vscode-eda.edaTargets": {
                     "https://127.0.0.1:9443": {
                         "edaUsername": "admin",
@@ -39,7 +41,10 @@
     "postCreateCommand": ".devcontainer/postCreate.sh",
     "postAttachCommand": ".devcontainer/postAttach.sh",
     "containerEnv": {
-        "EDA_PORT": "9443"
+        "EDA_PORT": "9443",
+        "TRY_EDA_OVERRIDES_FILE": "/workspaces/codespaces/.devcontainer/overrides.mk",
+        "TRY_EDA_KPT_SETTERS_FILE": "/eda-codespaces/codespaces-4vcpu-kpt-setters.yaml",
+        "NUM_CONCURRENT_IMG_PREPULLS": "8"
     },
     "forwardPorts": [
         9443
