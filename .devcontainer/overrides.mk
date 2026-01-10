@@ -1,4 +1,5 @@
-KPT_RETRY ?= 3
+KPT_RETRY ?= 5
+KPT_LIVE_APPLY_ARGS += --reconcile-timeout=3m
 
 define INSTALL_KPT_PACKAGE
 	{	\
