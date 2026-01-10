@@ -1,6 +1,15 @@
+NO_KIND = yes
+NO_LB = yes
+KPT_SETTERS_FILE = /eda-codespaces/codespaces-4vcpu-kpt-setters.yaml
+
 KPT_RETRY ?= 5
 KPT_LIVE_APPLY_ARGS += --reconcile-timeout=3m
 
+# Override the INSTALL_KPT_PACKAGE macro
+# 
+# Set the --reconcile-timeout flag so that KPT doesn't just hang for a while
+# then the updated macro below, will handle the exit by retrying the kpt live apply
+# until we hit the retry limit.
 define INSTALL_KPT_PACKAGE
 	{	\
 		echo -e "--> INSTALL: [\033[1;34m$2\033[0m] - Applying kpt package"									;\

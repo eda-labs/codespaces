@@ -40,7 +40,9 @@
     "postCreateCommand": ".devcontainer/postCreate.sh",
     "postAttachCommand": ".devcontainer/postAttach.sh",
     "containerEnv": {
-        "EDA_PORT": "9443"
+        "EDA_PORT": "9443",
+        "TRY_EDA_OVERRIDES_FILE_PATH": "/workspaces/codespaces/.devcontainer/overrides.mk",
+        "NUM_CONCURRENT_IMG_PREPULLS": "8"
     },
     "forwardPorts": [
         9443
