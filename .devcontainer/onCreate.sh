@@ -18,4 +18,4 @@ k3d cluster create eda-demo \
     --volume "$HOME/.images.txt:/opt/images.txt@server:*" \
     --no-lb
 
-docker exec -d k3d-eda-demo-server-0 sh -c "cat /opt/images.txt | xargs -P $NUM_CONCURRENT_IMG_PREPULLS -I {} crictl pull --creds $TOKEN {}"
+docker exec k3d-eda-demo-server-0 sh -c "cat /opt/images.txt | xargs -P $NUM_CONCURRENT_IMG_PREPULLS -I {} crictl pull --creds $TOKEN {}"
