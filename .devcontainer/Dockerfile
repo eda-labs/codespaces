@@ -18,6 +18,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install --no-instal
     btop \
     sudo \
     zsh \
+    iproute2 \
+    procps \
+    vim \
+    fontconfig \
+    xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m -s /bin/zsh vscode && \
@@ -36,7 +41,11 @@ RUN echo 'export PATH="$PATH:$EDA_PLAYGROUND_DIR/tools"' >> /etc/zsh/zshrc
 
 USER vscode
 
-RUN git clone --depth 1 "https://github.com/$EDA_PLAYGROUND_REPO" $EDA_PLAYGROUND_DIR && cd $EDA_PLAYGROUND_DIR && make download-tools
+# patching kpt version to beta59 to see if it is better in handling sporadic k8s
+# issues in GH codespaces where beta57 is stuck in reading the reconciled resources.
+RUN git clone --depth 1 "https://github.com/$EDA_PLAYGROUND_REPO" $EDA_PLAYGROUND_DIR && cd $EDA_PLAYGROUND_DIR && \
+    sed -i 's/KPT_VERSION ?= v1.0.0-beta.57/KPT_VERSION ?= v1.0.0-beta.59/' Makefile && \
+    make download-tools
 
 RUN curl -o $HOME/.bundle.yaml "https://raw.githubusercontent.com/nokia-eda/edaadm/refs/heads/main/bundles/eda-bundle-core-$EDA_VERSION.yaml" && \
     $EDA_PLAYGROUND_DIR/tools/yq '.assets.registries[] | .name as $reg | .images[] | .name as $img | .tags[] | $reg + "/" + $img + ":" + .' $HOME/.bundle.yaml > $HOME/.images.txt
@@ -45,3 +54,21 @@ SHELL ["/bin/bash", "-c"]
 RUN SRL=$(curl -s "https://raw.githubusercontent.com/nokia-eda/playground/refs/heads/main/topology/3-nodes-srl.yaml" | $EDA_PLAYGROUND_DIR/tools/yq '.spec.nodeTemplates | filter(.name == "default").[].nodeProfile'); \
     curl "https://raw.githubusercontent.com/nokia-eda/kpt/refs/heads/main/eda-kpt-playground/$SRL/engine_v1_nodeprofile_srlinux_${SRL//[^0-9.]/}.yaml" | \
     $EDA_PLAYGROUND_DIR/tools/yq '.spec.containerImage' >> $HOME/.images.txt
+
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+RUN curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
+
+# Install Nerd Font for terminal icons (starship, etc.)
+RUN mkdir -p /home/vscode/.local/share/fonts && \
+    curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz | \
+    tar -xJf - -C /home/vscode/.local/share/fonts && \
+    fc-cache -fv
+
+# copy shell files
+COPY --chown=vscode:vscode shell/ /home/vscode/
+COPY --chown=vscode:vscode shell/starship.toml /home/vscode/.config/starship.toml
+
+# edactl wrapper
+COPY --chmod=755 --chown=vscode:vscode shell/edactl /usr/local/bin/edactl
+
+RUN bash -c "/home/vscode/install-zsh-plugins.sh"
