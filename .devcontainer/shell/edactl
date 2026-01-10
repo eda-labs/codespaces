@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# edactl wrapper script
+# Routes commands to the eda-toolbox pod via kubectl exec
+# Handles both normal execution and completion requests
+#
+
+# Find the active eda-toolbox pod
+get_pod() {
+    kubectl -n eda-system get pods -l eda.nokia.com/app=eda-toolbox \
+        -o jsonpath='{.items[0].metadata.name}' 2>/dev/null
+}
+
+POD=$(get_pod)
+if [[ -z "$POD" ]]; then
+    echo "Error: No eda-toolbox pod found" >&2
+    exit 1
+fi
+
+# Handle completion requests from shell completion system
+if [[ "$1" == "__complete" ]]; then
+    shift
+    kubectl -n eda-system exec "$POD" -- edactl __complete "$@" 2>/dev/null || exit 1
+else
+    # Execute normal edactl commands interactively
+    exec kubectl -n eda-system exec -it "$POD" -- edactl "$@"
+fi

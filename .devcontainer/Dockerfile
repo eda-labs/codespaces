@@ -59,4 +59,7 @@ COPY --chown=vscode:vscode shell/ /home/vscode/
 COPY --chown=vscode:vscode shell/.zshrc /home/vscode/.zshrc
 COPY --chown=vscode:vscode shell/starship.toml /home/vscode/.config/starship.toml
 
+# edactl wrapper
+COPY --chmod=755 --chown=vscode:vscode shell/edactl /usr/local/bin/edactl
+
 RUN bash -c "/home/vscode/install-zsh-plugins.sh"
