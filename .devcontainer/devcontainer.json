@@ -10,7 +10,7 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                "ms-kubernetes-tools.vscode-kubernetes-tools",
+                // "ms-kubernetes-tools.vscode-kubernetes-tools",
                 "eda-labs.vscode-eda"
             ],
             "settings": {
