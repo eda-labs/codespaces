@@ -41,7 +41,8 @@
     "postAttachCommand": ".devcontainer/postAttach.sh",
     "containerEnv": {
         "EDA_PORT": "9443",
-        "TRY_EDA_OVERRIDES_FILE_PATH": "/workspaces/codespaces/.devcontainer/overrides.mk",
+        "TRY_EDA_OVERRIDES_FILE": "/workspaces/codespaces/.devcontainer/overrides.mk",
+        "TRY_EDA_KPT_SETTERS_FILE": "/eda-codespaces/codespaces-4vcpu-kpt-setters.yaml",
         "NUM_CONCURRENT_IMG_PREPULLS": "8"
     },
     "forwardPorts": [

@@ -1,7 +1,3 @@
-NO_KIND = yes
-NO_LB = yes
-KPT_SETTERS_FILE = /eda-codespaces/codespaces-4vcpu-kpt-setters.yaml
-
 KPT_RETRY ?= 5
 KPT_LIVE_APPLY_ARGS += --reconcile-timeout=3m
 
