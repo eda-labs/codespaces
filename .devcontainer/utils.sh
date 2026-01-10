@@ -21,80 +21,67 @@ function run-with-inactivity-timeout {
         attempt=$((attempt + 1))
         echo "=== Attempt $attempt/$max_retries: ${cmd[*]} ==="
         
-        # Create a temp file to track last output time (using file modification time)
+        # Create marker file - we'll use its modification time
         local marker_file=$(mktemp)
+        touch "$marker_file"
         
-        # Run command, update marker file on each output line
-        # Use process substitution to avoid subshell issues
-        local cmd_pid
-        "${cmd[@]}" 2>&1 &
-        cmd_pid=$!
-        
-        # Process output in background, touching marker file on each line
-        {
-            while IFS= read -r line; do
-                echo "$line"
-                touch "$marker_file"
-            done < <(tail -f /proc/$cmd_pid/fd/1 2>/dev/null || cat /proc/$cmd_pid/fd/1 2>/dev/null)
-        } 2>/dev/null &
-        local reader_pid=$!
-        
-        # Alternative: simpler approach using a FIFO
-        kill $reader_pid 2>/dev/null
-        
-        # Use a named pipe for reliable output tracking
-        local fifo=$(mktemp -u)
-        mkfifo "$fifo"
-        
-        # Run command with output to fifo
-        ("${cmd[@]}" 2>&1; echo "___CMD_DONE___") > "$fifo" &
-        cmd_pid=$!
+        # Start the command, piping through a while loop that touches the marker
+        # Using stdbuf to disable buffering
+        stdbuf -oL -eL "${cmd[@]}" 2>&1 | while IFS= read -r line; do
+            echo "$line"
+            touch "$marker_file"
+        done &
+        local pipe_pid=$!
         
         local timed_out=false
-        local cmd_finished=false
         
-        # Read from fifo with timeout checks
-        while true; do
-            # Read with timeout using read -t
-            if IFS= read -r -t "$timeout_seconds" line < "$fifo"; then
-                if [ "$line" = "___CMD_DONE___" ]; then
-                    cmd_finished=true
-                    break
-                fi
-                echo "$line"
-            else
-                # Timeout occurred
+        # Monitor loop - check marker file modification time
+        while kill -0 $pipe_pid 2>/dev/null; do
+            sleep 5
+            
+            # Get seconds since marker was last modified
+            local now=$(date +%s)
+            local last_mod=$(stat -c %Y "$marker_file" 2>/dev/null || echo "$now")
+            local idle_time=$((now - last_mod))
+            
+            if [ $idle_time -ge $timeout_seconds ]; then
                 timed_out=true
+                echo ""
+                echo "=== No output for ${idle_time}s (timeout: ${timeout_seconds}s). Restarting... ==="
+                
+                # Kill the entire process group
+                kill -- -$pipe_pid 2>/dev/null || true
+                # Kill by parent
+                pkill -P $pipe_pid 2>/dev/null || true
+                # Direct kill
+                kill $pipe_pid 2>/dev/null || true
+                # Kill any remaining make/kpt processes from this session
+                pkill -f "kpt live apply" 2>/dev/null || true
+                
+                sleep 2
                 break
             fi
         done
         
-        # Cleanup
-        rm -f "$fifo" "$marker_file"
+        wait $pipe_pid 2>/dev/null
+        local exit_code=$?
         
-        if [ "$cmd_finished" = true ]; then
-            # Wait for command and check exit status
-            if wait $cmd_pid 2>/dev/null; then
+        rm -f "$marker_file"
+        
+        if [ "$timed_out" = false ]; then
+            if [ $exit_code -eq 0 ]; then
                 echo "=== Command completed successfully ==="
                 return 0
             else
-                echo "=== Command failed with non-zero exit ==="
-                return 1
+                echo "=== Command failed with exit code $exit_code ==="
+                return $exit_code
             fi
         fi
         
-        if [ "$timed_out" = true ]; then
-            echo ""
-            echo "=== No output for ${timeout_seconds}s. Restarting... ==="
-            # Kill the command and all its children
-            pkill -P $cmd_pid 2>/dev/null
-            kill $cmd_pid 2>/dev/null
-            wait $cmd_pid 2>/dev/null
-            
-            if [ $attempt -lt $max_retries ]; then
-                echo "=== Retrying in 5 seconds... ==="
-                sleep 5
-            fi
+        # Timed out - retry
+        if [ $attempt -lt $max_retries ]; then
+            echo "=== Retrying in 5 seconds... ==="
+            sleep 5
         fi
     done
     
