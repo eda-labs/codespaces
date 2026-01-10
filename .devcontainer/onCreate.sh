@@ -6,7 +6,7 @@ free -m
 
 sudo sysctl -w fs.inotify.max_user_watches=1048576
 sudo sysctl -w fs.inotify.max_user_instances=512
-
+# xyz
 TOKEN=$($EDA_PLAYGROUND_DIR/tools/yq -o=json '.assets.registries[].auth' $HOME/.bundle.yaml | jq -r '(reduce range(.extraEncodeCount + 1) as $_ (.username; @base64d)) + ":" + (reduce range(.extraEncodeCount + 1) as $_ (.password; @base64d))')
 
 ensure-docker-is-ready
