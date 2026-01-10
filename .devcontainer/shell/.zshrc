@@ -18,6 +18,9 @@ plugins=(git ssh F-Sy-H kubectl zsh-autosuggestions)
 
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#cccccc"
 
+# Disable completion waiting dots - causes character duplication in containers
+COMPLETION_WAITING_DOTS="false"
+
 source $ZSH/oh-my-zsh.sh
 
 autoload -U compinit; compinit
