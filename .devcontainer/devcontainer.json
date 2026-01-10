@@ -20,6 +20,7 @@
                         "path": "/bin/zsh"
                     }
                 },
+                "terminal.integrated.fontFamily": "'JetBrainsMono Nerd Font', 'JetBrainsMono NF', monospace",
                 "vscode-eda.edaTargets": {
                     "https://127.0.0.1:9443": {
                         "edaUsername": "admin",

@@ -21,6 +21,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install --no-instal
     iproute2 \
     procps \
     vim \
+    fontconfig \
+    xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m -s /bin/zsh vscode && \
@@ -55,6 +57,12 @@ RUN SRL=$(curl -s "https://raw.githubusercontent.com/nokia-eda/playground/refs/h
 
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 RUN curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
+
+# Install Nerd Font for terminal icons (starship, etc.)
+RUN mkdir -p /home/vscode/.local/share/fonts && \
+    curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz | \
+    tar -xJf - -C /home/vscode/.local/share/fonts && \
+    fc-cache -fv
 
 # copy shell files
 COPY --chown=vscode:vscode shell/ /home/vscode/
