@@ -51,13 +51,13 @@ function run-with-inactivity-timeout {
                 
                 # Forcefully kill (-9) for immediate termination
                 # Kill the entire process group
-                kill -9 -- -$pipe_pid 2>/dev/null || true
+                kill -9 -- -$pipe_pid || true
                 # Kill by parent
-                pkill -9 -P $pipe_pid 2>/dev/null || true
+                pkill -9 -P $pipe_pid || true
                 # Direct kill
-                kill -9 $pipe_pid 2>/dev/null || true
+                kill -9 $pipe_pid || true
                 # Kill any remaining make/kpt processes from this session
-                pkill -9 -f "kpt live apply" 2>/dev/null || true
+                pkill -9 -f "kpt live apply" || true
                 
                 break
             fi
