@@ -1,7 +1,7 @@
 name: Build Devcontainer Image
 
 "on":
-  pull_request:
+  push:
   workflow_dispatch:
   release:
     types:
