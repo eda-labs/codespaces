@@ -21,17 +21,25 @@ function run-with-inactivity-timeout {
         attempt=$((attempt + 1))
         echo "=== Attempt $attempt/$max_retries: ${cmd[*]} ==="
         
-        # Create marker file - we'll use its modification time
+        # Create marker file and pid file
         local marker_file=$(mktemp)
+        local pid_file=$(mktemp)
         touch "$marker_file"
         
-        # Start the command, piping through a while loop that touches the marker
-        # Using stdbuf to disable buffering
-        stdbuf -oL -eL "${cmd[@]}" 2>&1 | while IFS= read -r line; do
+        # Run in a subshell that writes its PID, then execs the command
+        # Output goes through unbuffered to a while loop
+        (
+            echo $BASHPID > "$pid_file"
+            exec stdbuf -oL -eL "${cmd[@]}" 2>&1
+        ) | while IFS= read -r line; do
             echo "$line"
             touch "$marker_file"
         done &
         local pipe_pid=$!
+        
+        # Wait briefly for PID file to be written
+        sleep 0.5
+        local cmd_pid=$(cat "$pid_file" 2>/dev/null)
         
         local timed_out=false
         
@@ -47,18 +55,23 @@ function run-with-inactivity-timeout {
             if [ $idle_time -ge $timeout_seconds ]; then
                 timed_out=true
                 echo ""
-                echo "=== No output for ${idle_time}s (timeout: ${timeout_seconds}s). Restarting... ==="
+                echo "=== No output for ${idle_time}s (timeout: ${timeout_seconds}s). Killing processes... ==="
                 
-                # Forcefully kill (-9) for immediate termination
-                # Kill the entire process group
-                kill -9 -- -$pipe_pid || true
-                # Kill by parent
-                pkill -9 -P $pipe_pid || true
-                # Direct kill
-                kill -9 $pipe_pid || true
-                # Kill any remaining make/kpt processes from this session
-                pkill -9 -f "kpt live apply" || true
+                # Kill the actual command first (most important)
+                if [ -n "$cmd_pid" ]; then
+                    pkill -9 -P $cmd_pid 2>/dev/null || true
+                    kill -9 $cmd_pid 2>/dev/null || true
+                fi
                 
+                # Kill the pipe
+                pkill -9 -P $pipe_pid 2>/dev/null || true
+                kill -9 $pipe_pid 2>/dev/null || true
+                
+                # Kill any kpt processes
+                pkill -9 -f "kpt live apply" 2>/dev/null || true
+                pkill -9 -f "kpt live" 2>/dev/null || true
+                
+                echo "=== Processes killed ==="
                 break
             fi
         done
@@ -66,7 +79,7 @@ function run-with-inactivity-timeout {
         wait $pipe_pid 2>/dev/null
         local exit_code=$?
         
-        rm -f "$marker_file"
+        rm -f "$marker_file" "$pid_file"
         
         if [ "$timed_out" = false ]; then
             if [ $exit_code -eq 0 ]; then
