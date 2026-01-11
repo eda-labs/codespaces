@@ -41,7 +41,7 @@ RUN echo 'export PATH="$PATH:$EDA_PLAYGROUND_DIR/tools"' >> /etc/zsh/zshrc
 
 USER vscode
 
-RUN git clone --depth 1 --branch v0.0.1 "https://github.com/$EDA_PLAYGROUND_REPO" $EDA_PLAYGROUND_DIR && cd $EDA_PLAYGROUND_DIR && \
+RUN git clone "https://github.com/$EDA_PLAYGROUND_REPO" $EDA_PLAYGROUND_DIR && cd $EDA_PLAYGROUND_DIR && \
     make download-tools
 
 RUN curl -o $HOME/.bundle.yaml "https://raw.githubusercontent.com/nokia-eda/edaadm/refs/heads/main/bundles/eda-bundle-core-$EDA_VERSION.yaml" && \
