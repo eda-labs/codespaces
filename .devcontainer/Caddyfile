@@ -1,0 +1,8 @@
+:9443 {  
+  reverse_proxy https://localhost:9444 {
+    transport http {
+      tls_insecure_skip_verify
+    }
+    header_up Forwarded "host={http.request.header.X-Forwarded-Host};proto={http.request.header.X-Forwarded-Proto}"
+  }
+}
