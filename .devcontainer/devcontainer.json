@@ -1,6 +1,6 @@
 {
     "name": "Nokia EDA in GitHub Codespaces",
-    "image": "ghcr.io/eda-labs/codespaces/base:kaelem-test",
+    "image": "ghcr.io/eda-labs/codespaces/base:main",
     "features": {
         "ghcr.io/devcontainers/features/docker-in-docker:2": {
             "version": "latest",
@@ -43,8 +43,7 @@
     "containerEnv": {
         "EDA_PORT": "9443",
         "TRY_EDA_OVERRIDES_FILE": "/workspaces/codespaces/.devcontainer/overrides.mk",
-        "TRY_EDA_KPT_SETTERS_FILE": "/eda-codespaces/codespaces-4vcpu-kpt-setters.yaml",
-        "NUM_CONCURRENT_IMG_PREPULLS": "8"
+        "TRY_EDA_KPT_SETTERS_FILE": "/eda-codespaces/codespaces-4vcpu-kpt-setters.yaml"
     },
     "forwardPorts": [
         9443
