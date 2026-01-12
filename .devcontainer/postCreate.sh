@@ -21,4 +21,4 @@ docker exec eda-demo-control-plane sh -c "cat /opt/images.txt | xargs -P $(nproc
 make -f Makefile -f $TRY_EDA_OVERRIDES_FILE try-eda KPT_SETTERS_FILE=$TRY_EDA_KPT_SETTERS_FILE
 
 # apply keycloak patch for codespaces redirects
-make -f Makefile -f $TRY_EDA_OVERRIDES_FILE patch-codespaces-engineconfig
+make -f Makefile -f $TRY_EDA_OVERRIDES_FILE configure-codespaces-keycloak KPT_SETTERS_FILE=$TRY_EDA_KPT_SETTERS_FILE
