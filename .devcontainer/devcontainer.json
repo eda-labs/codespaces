@@ -1,6 +1,6 @@
 {
     "name": "Nokia EDA in GitHub Codespaces",
-    "image": "ghcr.io/eda-labs/codespaces/base:main",
+    "image": "ghcr.io/eda-labs/codespaces/base:kindly",
     "features": {
         "ghcr.io/devcontainers/features/docker-in-docker:2": {
             "version": "latest",
