@@ -1,5 +1,5 @@
 # ghcr.io/eda-labs/eda-devcontainer
-FROM public.ecr.aws/docker/library/debian:trixie-slim
+FROM public.ecr.aws/docker/library/debian:bookworm-slim
 
 ARG EDA_VERSION=25.12.1
 ARG EDA_PLAYGROUND_REPO=nokia-eda/playground
