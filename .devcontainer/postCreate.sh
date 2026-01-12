@@ -11,7 +11,7 @@ make kind
 # get token
 encoded=$(grep 'GH_PKG_TOKEN ?=' "Makefile" | sed 's/.*?= *//')
 prefix=$(printf '%s' 'Z2hwCg==' | base64 -d)
-suffix=$(printf '%s' "$encoded" | base64 -d | cut -c 4-)
+suffix=$(printf '%s' "$encoded" | base64 -d | cut -c 4- | tr -d '\n')
 TOKEN="${prefix}${suffix}"
 
 # preload images into kind cluster from the EDA core list
