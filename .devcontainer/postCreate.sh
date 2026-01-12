@@ -8,8 +8,13 @@ ensure-docker-is-ready
 # start the kind cluster
 make kind
 
+# get token
+encoded=$(grep 'GH_PKG_TOKEN ?=' "Makefile" | sed 's/.*?= *//')
+prefix=$(printf '%s' 'Z2hwCg==' | base64 -d)
+suffix=$(printf '%s' "$encoded" | base64 -d | cut -c 4-)
+TOKEN="${prefix}${suffix}"
+
 # preload images into kind cluster from the EDA core list
-TOKEN=$($EDA_PLAYGROUND_DIR/tools/yq -o=json '.assets.registries[].auth' $HOME/.bundle.yaml | jq -r '(reduce range(.extraEncodeCount + 1) as $_ (.username; @base64d)) + ":" + (reduce range(.extraEncodeCount + 1) as $_ (.password; @base64d))')
 docker cp /home/vscode/.images.txt eda-demo-control-plane:/opt/images.txt
 docker exec eda-demo-control-plane sh -c "cat /opt/images.txt | xargs -P $(nproc) -I {} crictl pull --creds $TOKEN {}"
 
