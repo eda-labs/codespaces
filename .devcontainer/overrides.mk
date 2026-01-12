@@ -31,3 +31,12 @@ define INSTALL_KPT_PACKAGE
 		echo -e "--> INSTALL: [\033[0;32m$2\033[0m] - Applied and reconciled package"						;\
 	}
 endef
+
+.PHONY: patch-codespaces-engineconfig
+patch-codespaces-engineconfig: | $(YQ) $(KPT_PKG) ## Patch the EngineConfig manifest to add codespaces custom settings
+	@{	\
+		echo "--> INFO: Patching EngineConfig manifest for codespaces"																			;\
+		ENGINE_CONFIG_FILE="$(KPT_CORE)/engine-config/engineconfig.yaml"																		;\
+		if [[ ! -f "$$ENGINE_CONFIG_FILE" ]]; then (echo "[ERROR] EngineConfig manifest not found at $$ENGINE_CONFIG_FILE" && exit 1); fi		;\
+		$(YQ) eval '.spec.customSettings = load("$(CODESPACES_ENGINECONFIG_CUSTOM_SETTINGS_PATCH)").customSettings' -i "$$ENGINE_CONFIG_FILE"	;\
+	}
