@@ -42,6 +42,9 @@ patch-codespaces-engineconfig: | $(YQ) $(KPT_PKG) ## Patch the EngineConfig mani
 		$(YQ) eval '.spec.customSettings = load("$(CODESPACES_ENGINECONFIG_CUSTOM_SETTINGS_PATCH)").customSettings' -i "$$ENGINE_CONFIG_FILE"	;\
 	}
 
+.PHONY: configure-try-eda-params
+configure-try-eda-params: | $(BASE) $(BUILD) $(KPT) $(KPT_SETTERS_TRY_EDA_FILE) patch-codespaces-engineconfig ## Configure parameters specific to try-eda
+
 .PHONY: ls-ways-to-reach-api-server 
 ls-ways-to-reach-api-server: | $(KUBECTL) configure-codespaces-keycloak
 
@@ -64,24 +67,3 @@ configure-codespaces-keycloak: | $(KUBECTL) ## Configure Keycloak frontendUrl fo
 	else \
 		echo "--> INFO: Not running in Codespaces, skipping Keycloak frontendUrl configuration" ;\
 	fi
-
-
-.PHONY: metallb-operator
-metallb-operator: | $(BASE) $(BUILD) $(KUBECTL) ; $(info --> LB: Loading the load balancer, metallb in the cluster)
-	@{	\
-		$(KUBECTL) apply -f $(CFG)/metallb-native.yaml | $(INDENT_OUT)	;\
-		sleep 10 														;\
-		$(KUBECTL) wait --namespace metallb-system \
-						--for=condition=ready pod \
-						--selector=app=metallb \
-						--timeout=120s | $(INDENT_OUT);\
-	}
-
-KIND_BRIDGE_NAME=k3d-eda-demo
-
-.PHONY: metallb-configure-pools
-metallb-configure-pools: | $(BASE) $(KPT) ; $(info --> LB: Applying metallb IP pool configuration) @ ## Create metallb address pools
-	$(eval KIND_SUBNETS=$(shell docker network inspect -f '{{range .IPAM.Config}}{{.Subnet}} {{end}}' $(KIND_BRIDGE_NAME)))
-	$(eval KIND_SUBNET=$(shell echo "$(KIND_SUBNETS)" | tr ' ' '\n' | grep -v ':' | head -n 1 | awk -F'.' '{print $$1 "." $$2}'))
-	@echo "--> LB: Detected IPv4 Subnet: $(KIND_SUBNET)"
-	@cat $(LB_CFG_SRC_POOL) | $(KPT) fn eval - --image $(APPLY_SETTER_IMG) --truncate-output=false --output unwrap -- LB_IP_POOLS="[$(KIND_SUBNET).255.0/24]" LB_POOL_NAME=$(LB_POOL_NAME) | $(KUBECTL) apply -f - | $(INDENT_OUT)

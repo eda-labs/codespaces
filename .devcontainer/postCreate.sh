@@ -3,16 +3,6 @@ source .devcontainer/utils.sh
 
 cd $EDA_PLAYGROUND_DIR
 
-ensure-docker-is-ready
-
-# start the k3d cluster
-k3d cluster create eda-demo \
-    --image rancher/k3s:v1.34.1-k3s1 \
-    --k3s-arg "--disable=traefik@server:*" \
-    --k3s-arg "--disable=servicelb@server:*" \
-    --volume "$HOME/.images.txt:/opt/images.txt@server:*" \
-    --no-lb
-
 # get token
 encoded=$(grep 'GH_PKG_TOKEN ?=' "Makefile" | sed 's/.*?= *//')
 prefix=$(printf '%s' 'Z2hwCg==' | base64 -d)
