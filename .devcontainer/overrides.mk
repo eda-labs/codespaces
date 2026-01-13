@@ -83,5 +83,5 @@ patch-eda-api-svc: | $(YQ) $(KPT_PKG) ## Patch the eda-api-svc to change port 44
 .PHONY: start-ui-port-forward
 start-ui-port-forward:
 	@{	\
-		echo "--> UI is exposed via Load Balancer"	;\
+		echo "--> Access EDA UI via https://$${CODESPACE_NAME}-$${EDA_PORT}.$${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}"	;\
 	}
