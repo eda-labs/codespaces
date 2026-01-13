@@ -2,9 +2,6 @@ KPT_RETRY ?= 5
 KPT_RECONCILE_TIMEOUT ?= 3m
 KPT_LIVE_APPLY_ARGS += --reconcile-timeout=$(KPT_RECONCILE_TIMEOUT)
 
-# EDA HTTPS Port
-EXT_HTTPS_PORT ?= 9443
-
 # Override the INSTALL_KPT_PACKAGE macro
 # 
 # Set the --reconcile-timeout flag so that KPT doesn't just hang for a while
