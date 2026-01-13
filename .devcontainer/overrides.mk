@@ -41,6 +41,9 @@ patch-codespaces-engineconfig: | $(YQ) $(KPT_PKG) ## Patch the EngineConfig mani
 		$(YQ) eval '.spec.customSettings = load("$(CODESPACES_ENGINECONFIG_CUSTOM_SETTINGS_PATCH)").customSettings' -i "$$ENGINE_CONFIG_FILE"	;\
 	}
 
+.PHONY: ls-ways-to-reach-api-server 
+ls-ways-to-reach-api-server: | $(KUBECTL) configure-codespaces-keycloak
+
 .PHONY: configure-codespaces-keycloak
 configure-codespaces-keycloak: | $(KUBECTL) ## Configure Keycloak frontendUrl for GitHub Codespaces
 	@if [ -n "$(CODESPACE_NAME)" ] && [ -n "$(GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN)" ]; then \
