@@ -10,7 +10,8 @@ suffix=$(printf '%s' "$encoded" | base64 -d | cut -c 4- | tr -d '\n')
 TOKEN="${prefix}${suffix}"
 
 # preload images into the cluster from the EDA core list
-PARALLEL_JOBS=$(($(nproc) - 1))
+# to reduce the number of jobs: PARALLEL_JOBS=$(($(nproc) - 1))
+PARALLEL_JOBS=$(nproc)
 docker exec k3d-eda-demo-server-0 sh -c "cat /opt/images.txt | xargs -P $PARALLEL_JOBS -I {} crictl pull --creds nokia-eda-bot:$TOKEN {}"
 
 make -f Makefile -f $TRY_EDA_OVERRIDES_FILE try-eda NO_KIND=yes NO_LB=yes KPT_SETTERS_FILE=$TRY_EDA_KPT_SETTERS_FILE
