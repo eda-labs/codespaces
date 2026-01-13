@@ -67,3 +67,9 @@ configure-codespaces-keycloak: | $(KUBECTL) ## Configure Keycloak frontendUrl fo
 	else \
 		echo "--> INFO: Not running in Codespaces, skipping Keycloak frontendUrl configuration" ;\
 	fi
+
+.PHONY: start-ui-port-forward
+start-ui-port-forward:
+	@{	\
+		echo "--> UI is exposed via Load Balancer"	;\
+	}
