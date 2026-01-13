@@ -37,6 +37,7 @@
             }
         }
     },
+    "initializeCommand": ".devcontainer/initCommand.sh",
     "onCreateCommand": ".devcontainer/onCreate.sh",
     "postCreateCommand": ".devcontainer/postCreate.sh",
     "postAttachCommand": ".devcontainer/postAttach.sh",
