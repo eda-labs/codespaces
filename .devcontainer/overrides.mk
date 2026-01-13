@@ -47,7 +47,7 @@ ls-ways-to-reach-api-server: | $(KUBECTL) configure-codespaces-keycloak
 .PHONY: configure-codespaces-keycloak
 configure-codespaces-keycloak: | $(KUBECTL) ## Configure Keycloak frontendUrl for GitHub Codespaces
 	@if [ -n "$(CODESPACE_NAME)" ] && [ -n "$(GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN)" ]; then \
-		CODESPACE_URL="https://$(CODESPACE_NAME)-9443.$(GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN)" ;\
+		CODESPACE_URL="https://$(CODESPACE_NAME)-$(EDA_PORT).$(GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN)" ;\
 		KC_URL="https://eda-keycloak:9443/core/httpproxy/v1/keycloak" ;\
 		echo "--> INFO: Configuring Keycloak frontendUrl for Codespaces..." ;\
 		$(KUBECTL) wait --for=condition=ready pod -l eda.nokia.com/app=keycloak -n $(EDA_CORE_NAMESPACE) --timeout=300s ;\
