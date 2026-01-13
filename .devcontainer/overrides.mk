@@ -75,3 +75,14 @@ metallb-operator: | $(BASE) $(BUILD) $(KUBECTL) ; $(info --> LB: Loading the loa
 						--selector=app=metallb \
 						--timeout=120s | $(INDENT_OUT);\
 	}
+
+KIND_BRIDGE_NAME=k3d-eda-demo
+
+.PHONY: metallb-configure-pools
+metallb-configure-pools: | $(BASE) $(KPT) ; $(info --> LB: Applying metallb IP pool configuration) @ ## Create metallb address pools
+	$(eval KIND_SUBNETS=$(shell docker network inspect -f '{{range .IPAM.Config}}{{.Subnet}} {{end}}' $(KIND_BRIDGE_NAME)))
+	$(eval KIND_SUBNET=$(shell echo "$(KIND_SUBNETS)" | tr ' ' '\n' | grep -v ':' | head -n 1 | awk -F'.' '{print $$1 "." $$2}'))
+	$(eval KIND_SUBNET6=$(shell echo "$(KIND_SUBNETS)" | tr ' ' '\n' | grep ':' | head -n 1 | awk -F':' '{print $$1 ":" $$2 ":" $$3 ":" $$4}'))
+	@echo "--> LB: Detected IPv4 Subnet: $(KIND_SUBNET)"
+	@echo "--> LB: Detected IPv6 Subnet: $(KIND_SUBNET6)"
+	@cat $(LB_CFG_SRC_POOL) | $(KPT) fn eval - --image $(APPLY_SETTER_IMG) --truncate-output=false --output unwrap -- LB_IP_POOLS="[$(KIND_SUBNET).255.0/24, $(KIND_SUBNET6):ffff:ffff:ffff:ffff/120]" LB_POOL_NAME=$(LB_POOL_NAME) | $(KUBECTL) apply -f - | $(INDENT_OUT)
