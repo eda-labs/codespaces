@@ -73,5 +73,5 @@ configure-codespaces-keycloak: | $(KUBECTL) ## Configure Keycloak frontendUrl fo
 .PHONY: start-ui-port-forward
 start-ui-port-forward:
 	@{	\
-		echo "--> Access EDA UI via https://$${CODESPACE_NAME}-$${EDA_PORT}.$${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}"	;\
+		echo "--> Triggering browser window open 0.0.0.0:9443"	;\
 	}
