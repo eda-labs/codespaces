@@ -1,5 +1,6 @@
 KPT_RETRY ?= 5
-KPT_LIVE_APPLY_ARGS += --reconcile-timeout=3m
+KPT_RECONCILE_TIMEOUT ?= 3m
+KPT_LIVE_APPLY_ARGS += --reconcile-timeout=$(KPT_RECONCILE_TIMEOUT)
 
 # Override the INSTALL_KPT_PACKAGE macro
 # 
@@ -24,7 +25,7 @@ define INSTALL_KPT_PACKAGE
 				echo -e "--> INSTALL: [\033[1;31m$2\033[0m] - Failed after $(KPT_RETRY) attempts"			;\
 				exit 1																						;\
 			fi																								;\
-			echo -e "--> INSTALL: [\033[1;33m$2\033[0m] - Attempt $$attempt failed, retrying..."			;\
+			echo -e "--> INSTALL: [\033[1;33m$2\033[0m] - Attempt $$attempt failed after $(KPT_RECONCILE_TIMEOUT), retrying..."	;\
 			sleep 2																							;\
 		done																								;\
 		popd &>/dev/null || (echo "[ERROR]: Failed to switch back from $2" && exit 1)						;\
