@@ -33,6 +33,8 @@ define INSTALL_KPT_PACKAGE
 	}
 endef
 
+CODESPACES_ENGINECONFIG_CUSTOM_SETTINGS_PATCH := /eda-codespaces/engine-config-patch.yaml
+
 .PHONY: patch-codespaces-engineconfig
 patch-codespaces-engineconfig: | $(YQ) $(KPT_PKG) ## Patch the EngineConfig manifest to add codespaces custom settings
 	@{	\
