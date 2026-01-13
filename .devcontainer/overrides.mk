@@ -69,7 +69,7 @@ configure-codespaces-keycloak: | $(KUBECTL) ## Configure Keycloak frontendUrl fo
 metallb-operator: | $(BASE) $(BUILD) $(KUBECTL) ; $(info --> LB: Loading the load balancer, metallb in the cluster)
 	@{	\
 		$(KUBECTL) apply -f $(CFG)/metallb-native.yaml | $(INDENT_OUT)	;\
-		sleep 5 														;\
+		sleep 15 														;\
 		$(KUBECTL) wait --namespace metallb-system \
 						--for=condition=ready pod \
 						--selector=app=metallb \
