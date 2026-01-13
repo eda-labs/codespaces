@@ -62,6 +62,9 @@ RUN curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
 COPY --chown=vscode:vscode shell/ /home/vscode/
 COPY --chown=vscode:vscode shell/starship.toml /home/vscode/.config/starship.toml
 
+# k9s skin
+COPY k9s/dracula.yaml /home/vscode/.config/k9s/skins/dracula.yaml
+
 # edactl wrapper
 COPY --chmod=755 --chown=vscode:vscode shell/edactl /usr/local/bin/edactl
 
