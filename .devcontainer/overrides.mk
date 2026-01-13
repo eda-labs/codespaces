@@ -45,7 +45,7 @@ patch-codespaces-engineconfig: | $(YQ) $(KPT_PKG) ## Patch the EngineConfig mani
 	}
 
 .PHONY: configure-try-eda-params
-configure-try-eda-params: | $(BASE) $(BUILD) $(KPT) $(KPT_SETTERS_TRY_EDA_FILE) patch-codespaces-engineconfig ## Configure parameters specific to try-eda
+configure-try-eda-params: | $(BASE) $(BUILD) $(KPT) $(KPT_SETTERS_TRY_EDA_FILE) patch-codespaces-engineconfig patch-eda-api-svc ## Configure parameters specific to try-eda
 
 .PHONY: ls-ways-to-reach-api-server 
 ls-ways-to-reach-api-server: | $(KUBECTL) configure-codespaces-keycloak
@@ -69,6 +69,16 @@ configure-codespaces-keycloak: | $(KUBECTL) ## Configure Keycloak frontendUrl fo
 	else \
 		echo "--> INFO: Not running in Codespaces, skipping Keycloak frontendUrl configuration" ;\
 	fi
+
+.PHONY: patch-eda-api-svc
+patch-eda-api-svc: | $(YQ) $(KPT_PKG) ## Patch the eda-api-svc to change port 443 to 9443
+	@{	\
+		echo "--> INFO: Patching eda-api-svc port from 443 to 9443"													;\
+		API_SVC_FILE="$(KPT_CORE)/configs/eda-api-svc.yaml"															;\
+		if [[ ! -f "$$API_SVC_FILE" ]]; then (echo "[ERROR] eda-api-svc manifest not found at $$API_SVC_FILE" && exit 1); fi	;\
+		$(YQ) eval '(.spec.ports[] | select(.name == "apiserverhttps") | .port) = 9443' -i "$$API_SVC_FILE"			;\
+		echo "--> INFO: Successfully patched eda-api-svc port"														;\
+	}
 
 .PHONY: start-ui-port-forward
 start-ui-port-forward:

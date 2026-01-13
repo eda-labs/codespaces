@@ -6,7 +6,6 @@ kind: ConfigMap
 metadata:
   name: codespaces-4vcpu-apply-setter-fn-config
 data:
-  EXT_HTTPS_PORT: 9443
   # AI Engine
   EAE_REQ_CPU: 10m
   # Artifact server
