@@ -11,6 +11,7 @@ k3d cluster create eda-demo \
     --k3s-arg "--disable=traefik@server:*" \
     --k3s-arg "--disable=servicelb@server:*" \
     --volume "$HOME/.images.txt:/opt/images.txt@server:*" \
+    --no-lb
 
 # get token
 encoded=$(grep 'GH_PKG_TOKEN ?=' "Makefile" | sed 's/.*?= *//')
