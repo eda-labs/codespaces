@@ -33,6 +33,9 @@ RUN useradd -m -s /bin/zsh vscode && \
 COPY --chmod=755 scripts/ /usr/local/bin/.
 COPY codespaces-4vcpu-kpt-setters.yaml /eda-codespaces/codespaces-4vcpu-kpt-setters.yaml
 
+# install k3d
+RUN curl -fsSL --retry 3 https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=v5.8.3 bash
+
 # Add EDA Playground tools to PATH (zsh)
 RUN echo 'export PATH="$PATH:$EDA_PLAYGROUND_DIR/tools"' >> /etc/zsh/zshrc
 
