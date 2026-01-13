@@ -1,7 +1,6 @@
 # Nokia EDA in Codespaces
 
 [![Codespaces][codespaces-4vcpu-svg]][codespaces-4vcpu-url]
-<!-- [![Codespaces][codespaces-8vcpu-svg]][codespaces-8vcpu-url] -->
 [![Discord][discord-svg]][discord-url]  
 [Learn more about EDA in Codespaces](https://docs.eda.dev/getting-started/codespaces)
 <!-- TODO:rdodin: change for tour of eda url for codespaces in the main readme -->
