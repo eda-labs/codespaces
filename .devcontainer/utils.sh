@@ -7,3 +7,8 @@ function ensure-docker-is-ready {
     done
     echo "Docker is ready"
 }
+
+function log {
+    local msg="${1:-}"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $msg"
+}
