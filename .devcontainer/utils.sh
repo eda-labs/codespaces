@@ -15,7 +15,7 @@ function log {
 
 function check_eda_api_reachability {
     log "Checking EDA API reachability"
-    curl -vf --retry 3 "https://127.0.0.1$EDA_PORT" -o /dev/null
+    curl -vf --retry 3 "https://127.0.0.1:$EDA_PORT" -o /dev/null
 }
 
 function dump_system_info {
