@@ -1,17 +1,7 @@
 #!/bin/bash
 source .devcontainer/utils.sh
 
-log "SYSTEM INFO:"
-echo "System has $(nproc) CPUs"
-
-log "MEMORY:"
-free -m
-
-log "DISK: df -h"
-df -h
-
-log "DISK: lsblk"
-lsblk
+dump_system_info
 
 log "Waiting for docker"
 T_START=$(date +%s)
