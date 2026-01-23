@@ -1,6 +1,6 @@
 {
     "name": "Nokia EDA in GitHub Codespaces",
-    "image": "ghcr.io/eda-labs/codespaces/base:25.12.1-1",
+    "image": "ghcr.io/eda-labs/codespaces/base:no-hardcoded-paths",
     "features": {
         "ghcr.io/devcontainers/features/docker-in-docker:2": {
             "version": "latest",
@@ -43,7 +43,7 @@
     "postAttachCommand": ".devcontainer/postAttach.sh",
     "containerEnv": {
         "EDA_PORT": "9443",
-        "TRY_EDA_OVERRIDES_FILE": "/workspaces/codespaces/.devcontainer/overrides.mk",
+        "TRY_EDA_OVERRIDES_FILE": "${containerWorkspaceFolder}/.devcontainer/overrides.mk",
         "TRY_EDA_KPT_SETTERS_FILE": "/eda-codespaces/codespaces-4vcpu-kpt-setters.yaml",
         "K9S_SKIN": "dracula"
     },
