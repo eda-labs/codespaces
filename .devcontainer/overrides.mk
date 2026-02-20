@@ -71,9 +71,7 @@ configure-codespaces-keycloak: | $(KUBECTL) ## Configure Keycloak frontendUrl fo
 	fi
 
 ifdef NO_TOPO
-.PHONY: topology-load
-topology-load:
-	@echo "--> INFO: Skipping topology load (NO_TOPO is set)"
+TOPO := $(TOPO_EMPTY)
 
 .PHONY: patch-try-eda-node-user
 patch-try-eda-node-user:
