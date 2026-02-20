@@ -70,6 +70,16 @@ configure-codespaces-keycloak: | $(KUBECTL) ## Configure Keycloak frontendUrl fo
 		echo "--> INFO: Not running in Codespaces, skipping Keycloak frontendUrl configuration" ;\
 	fi
 
+ifdef NO_TOPO
+.PHONY: topology-load
+topology-load:
+	@echo "--> INFO: Skipping topology load (NO_TOPO is set)"
+
+.PHONY: patch-try-eda-node-user
+patch-try-eda-node-user:
+	@echo "--> INFO: Skipping node user patch (NO_TOPO is set)"
+endif
+
 .PHONY: start-ui-port-forward
 start-ui-port-forward:
 	@{	\
