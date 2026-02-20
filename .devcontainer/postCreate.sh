@@ -6,9 +6,10 @@ cd $EDA_PLAYGROUND_DIR
 log "Starting image prepull"
 T_START=$(date +%s)
 # preload images into the cluster from the EDA core list
-# to reduce the number of jobs: PARALLEL_JOBS=$(($(nproc) - 1))
-PARALLEL_JOBS=$(nproc)
-docker exec k3d-eda-demo-server-0 sh -c "cat /opt/images.txt | xargs -P $PARALLEL_JOBS -I {} crictl pull {}"
+# to reduce the number of jobs:
+PARALLEL_JOBS=$(($(nproc) - 1))
+# PARALLEL_JOBS=$(nproc)
+docker exec k3d-eda-demo-server-0 sh -c "cat /opt/images.txt | xargs -P $PARALLEL_JOBS -I {} sh -c 'echo \"[\$(date +%H:%M:%S)] Pulling image {}\"; crictl pull {} >/dev/null 2>&1'"
 
 T_END=$(date +%s)
 log "Images pulled. Took $((T_END-T_START)) seconds."
