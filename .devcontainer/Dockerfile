@@ -1,9 +1,14 @@
 # ghcr.io/eda-labs/eda-devcontainer
 FROM public.ecr.aws/docker/library/debian:bookworm-slim
 
+# change this one to change EDA version
 ARG EDA_VERSION=25.12.1
+
 ARG EDA_PLAYGROUND_REPO=nokia-eda/playground
 ARG EDA_PLAYGROUND_DIR=/home/vscode/.playground
+
+# set this one before the substitution
+ENV CODESPACE_EDA_VERSION=$EDA_VERSION
 
 ENV EDA_VERSION=${EDA_VERSION//./-}
 ENV EDA_PLAYGROUND_REPO=$EDA_PLAYGROUND_REPO
