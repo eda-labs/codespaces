@@ -2,6 +2,12 @@ KPT_RETRY ?= 5
 KPT_RECONCILE_TIMEOUT ?= 3m
 KPT_LIVE_APPLY_ARGS += --reconcile-timeout=$(KPT_RECONCILE_TIMEOUT)
 
+ifdef CODESPACE_EDA_VERSION
+EDA_CORE_VERSION=$(CODESPACE_EDA_VERSION)
+EDA_APPS_VERSION=$(CODESPACE_EDA_VERSION)
+EDABUILDER_VERSION=$(CODESPACE_EDA_VERSION)
+endif
+
 # Override the INSTALL_KPT_PACKAGE macro
 # 
 # Set the --reconcile-timeout flag so that KPT doesn't just hang for a while
