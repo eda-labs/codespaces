@@ -2,7 +2,7 @@
 
 [![Codespaces][codespaces-4vcpu-svg]][codespaces-4vcpu-url]
 [![Discord][discord-svg]][discord-url]  
-[Learn more about EDA in Codespaces](https://docs.eda.dev/getting-started/codespaces)
+[Learn more about EDA in Codespaces](https://docs.eda.dev/25.12/getting-started/codespaces/)
 <!-- TODO:rdodin: change for tour of eda url for codespaces in the main readme -->
 
 [codespaces-4vcpu-svg]: https://gitlab.com/-/project/7617705/uploads/3f69f403e1371b3b578ee930df8930e8/codespaces-btn-4vcpu-export.svg
