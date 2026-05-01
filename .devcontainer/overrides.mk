@@ -81,7 +81,17 @@ configure-codespaces-auth-client: | $(KUBECTL) ## Configure Keycloak auth client
 				-H 'Authorization: Bearer $${TOKEN}' \
 				-H 'Content-Type: application/json' \
 				--data @-" ;\
+		$(KUBECTL) exec -n $(EDA_CORE_NAMESPACE) deploy/eda-toolbox -- sh -c "curl -skf \
+			-H 'Authorization: Bearer $${TOKEN}' \
+			'$${KC_URL}/admin/realms/eda' \
+			| jq '.attributes.frontendUrl = \"$${CODESPACE_URL}/core/proxy/v1/identity\"' \
+			| curl -skf -X PUT \
+				'$${KC_URL}/admin/realms/eda' \
+				-H 'Authorization: Bearer $${TOKEN}' \
+				-H 'Content-Type: application/json' \
+				--data @-" ;\
 		echo "--> INFO: Keycloak auth client rootUrl set to: $${CODESPACE_URL}" ;\
+		echo "--> INFO: Keycloak realm frontendUrl set to: $${CODESPACE_URL}/core/proxy/v1/identity" ;\
 	else \
 		echo "--> INFO: Not running in Codespaces, skipping Keycloak auth client configuration" ;\
 	fi
