@@ -53,29 +53,6 @@ patch-codespaces-engineconfig: | $(YQ) $(KPT_PKG) ## Patch the EngineConfig mani
 .PHONY: configure-try-eda-params
 configure-try-eda-params: | $(BASE) $(BUILD) $(KPT) $(KPT_SETTERS_TRY_EDA_FILE) patch-codespaces-engineconfig ## Configure parameters specific to try-eda
 
-.PHONY: ls-ways-to-reach-api-server 
-ls-ways-to-reach-api-server: | $(KUBECTL) configure-codespaces-keycloak
-
-.PHONY: configure-codespaces-keycloak
-configure-codespaces-keycloak: | $(KUBECTL) ## Configure Keycloak frontendUrl for GitHub Codespaces
-	@if [ -n "$(CODESPACE_NAME)" ] && [ -n "$(GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN)" ]; then \
-		CODESPACE_URL="https://$(CODESPACE_NAME)-$(EDA_PORT).$(GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN)" ;\
-		KC_URL="https://eda-keycloak:9443/core/httpproxy/v1/keycloak" ;\
-		echo "--> INFO: Configuring Keycloak frontendUrl for Codespaces..." ;\
-		$(KUBECTL) wait --for=condition=ready pod -l eda.nokia.com/app=keycloak -n $(EDA_CORE_NAMESPACE) --timeout=300s ;\
-		TOKEN=$$($(KUBECTL) exec -n $(EDA_CORE_NAMESPACE) deploy/eda-toolbox -- curl -sk -X POST \
-			"$${KC_URL}/realms/master/protocol/openid-connect/token" \
-			-d "username=admin" -d "password=admin" -d "grant_type=password" -d "client_id=admin-cli" | jq -r '.access_token') ;\
-		$(KUBECTL) exec -n $(EDA_CORE_NAMESPACE) deploy/eda-toolbox -- curl -sk -X PUT \
-			"$${KC_URL}/admin/realms/eda" \
-			-H "Authorization: Bearer $${TOKEN}" \
-			-H "Content-Type: application/json" \
-			-d "{\"attributes\": {\"frontendUrl\": \"$${CODESPACE_URL}/core/httpproxy/v1/keycloak\"}}" ;\
-		echo "--> INFO: Keycloak frontendUrl set to: $${CODESPACE_URL}/core/httpproxy/v1/keycloak" ;\
-	else \
-		echo "--> INFO: Not running in Codespaces, skipping Keycloak frontendUrl configuration" ;\
-	fi
-
 ifdef NO_TOPO
 TOPO := $(TOPO_EMPTY)
 
