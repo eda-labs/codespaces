@@ -35,3 +35,4 @@ data:
   SC_REQ_CPU: 10m
 
   GOGS_PV_CLAIM_SIZE: 5Gi
+  EXT_PROXY_MODE: XForward
