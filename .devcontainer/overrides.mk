@@ -49,7 +49,6 @@ patch-codespaces-engineconfig: | $(YQ) $(KPT_PKG) ## Patch the EngineConfig mani
 		ENGINE_CONFIG_FILE="$(KPT_CORE)/engine-config/engineconfig.yaml"																		;\
 		if [[ ! -f "$$ENGINE_CONFIG_FILE" ]]; then (echo "[ERROR] EngineConfig manifest not found at $$ENGINE_CONFIG_FILE" && exit 1); fi		;\
 		$(YQ) eval '.spec.customSettings = load("$(CODESPACES_ENGINECONFIG_CUSTOM_SETTINGS_PATCH)").customSettings' -i "$$ENGINE_CONFIG_FILE"	;\
-		$(YQ) eval '.spec.cluster.external.proxyMode = "XForward"' -i "$$ENGINE_CONFIG_FILE"													;\
 	}
 
 .PHONY: configure-try-eda-params
