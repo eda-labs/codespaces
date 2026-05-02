@@ -49,52 +49,10 @@ patch-codespaces-engineconfig: | $(YQ) $(KPT_PKG) ## Patch the EngineConfig mani
 		ENGINE_CONFIG_FILE="$(KPT_CORE)/engine-config/engineconfig.yaml"																		;\
 		if [[ ! -f "$$ENGINE_CONFIG_FILE" ]]; then (echo "[ERROR] EngineConfig manifest not found at $$ENGINE_CONFIG_FILE" && exit 1); fi		;\
 		$(YQ) eval '.spec.customSettings = load("$(CODESPACES_ENGINECONFIG_CUSTOM_SETTINGS_PATCH)").customSettings' -i "$$ENGINE_CONFIG_FILE"	;\
-		$(YQ) eval '.spec.cluster.external.proxyMode = "XForward"' -i "$$ENGINE_CONFIG_FILE"													;\
 	}
 
 .PHONY: configure-try-eda-params
 configure-try-eda-params: | $(BASE) $(BUILD) $(KPT) $(KPT_SETTERS_TRY_EDA_FILE) patch-codespaces-engineconfig ## Configure parameters specific to try-eda
-
-.PHONY: ls-ways-to-reach-api-server
-ls-ways-to-reach-api-server: configure-codespaces-auth-client
-
-.PHONY: configure-codespaces-auth-client
-configure-codespaces-auth-client: | $(KUBECTL) ## Configure Keycloak auth client redirect base for GitHub Codespaces
-	@if [ -n "$(CODESPACE_NAME)" ] && [ -n "$(GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN)" ]; then \
-		CODESPACE_URL="https://$(CODESPACE_NAME)-$(EDA_PORT).$(GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN)" ;\
-		KC_URL="https://eda-api/core/httpproxy/v1/keycloak" ;\
-		echo "--> INFO: Configuring Keycloak auth client rootUrl for Codespaces..." ;\
-		$(KUBECTL) wait --for=condition=ready pod -l eda.nokia.com/app=keycloak -n $(EDA_CORE_NAMESPACE) --timeout=300s ;\
-		TOKEN=$$($(KUBECTL) exec -n $(EDA_CORE_NAMESPACE) deploy/eda-toolbox -- curl -skf -X POST \
-			"$${KC_URL}/realms/master/protocol/openid-connect/token" \
-			-d "username=admin" -d "password=admin" -d "grant_type=password" -d "client_id=admin-cli" | jq -r '.access_token') ;\
-		CLIENT_ID=$$($(KUBECTL) exec -n $(EDA_CORE_NAMESPACE) deploy/eda-toolbox -- curl -skf \
-			-H "Authorization: Bearer $${TOKEN}" \
-			"$${KC_URL}/admin/realms/eda/clients?clientId=auth" | jq -r '.[0].id') ;\
-		if [[ -z "$${CLIENT_ID}" || "$${CLIENT_ID}" == "null" ]]; then echo "[ERROR] Keycloak auth client not found" && exit 1; fi ;\
-		$(KUBECTL) exec -n $(EDA_CORE_NAMESPACE) deploy/eda-toolbox -- sh -c "curl -skf \
-			-H 'Authorization: Bearer $${TOKEN}' \
-			'$${KC_URL}/admin/realms/eda/clients/$${CLIENT_ID}' \
-			| jq '.rootUrl = \"$${CODESPACE_URL}\" | .baseUrl = \"/\" | .redirectUris = [\"/*\"] | .webOrigins = [\"+\"]' \
-			| curl -skf -X PUT \
-				'$${KC_URL}/admin/realms/eda/clients/$${CLIENT_ID}' \
-				-H 'Authorization: Bearer $${TOKEN}' \
-				-H 'Content-Type: application/json' \
-				--data @-" ;\
-		$(KUBECTL) exec -n $(EDA_CORE_NAMESPACE) deploy/eda-toolbox -- sh -c "curl -skf \
-			-H 'Authorization: Bearer $${TOKEN}' \
-			'$${KC_URL}/admin/realms/eda' \
-			| jq '.attributes.frontendUrl = \"$${CODESPACE_URL}/core/proxy/v1/identity\"' \
-			| curl -skf -X PUT \
-				'$${KC_URL}/admin/realms/eda' \
-				-H 'Authorization: Bearer $${TOKEN}' \
-				-H 'Content-Type: application/json' \
-				--data @-" ;\
-		echo "--> INFO: Keycloak auth client rootUrl set to: $${CODESPACE_URL}" ;\
-		echo "--> INFO: Keycloak realm frontendUrl set to: $${CODESPACE_URL}/core/proxy/v1/identity" ;\
-	else \
-		echo "--> INFO: Not running in Codespaces, skipping Keycloak auth client configuration" ;\
-	fi
 
 ifdef NO_TOPO
 TOPO := $(TOPO_EMPTY)
