@@ -2,7 +2,7 @@
 FROM public.ecr.aws/docker/library/debian:bookworm-slim
 
 # change this one to change EDA version
-ARG EDA_VERSION=26.4.1
+ARG EDA_VERSION=26.8.1
 
 ARG EDA_PLAYGROUND_REPO=nokia-eda/playground
 ARG EDA_PLAYGROUND_DIR=/home/vscode/.playground
