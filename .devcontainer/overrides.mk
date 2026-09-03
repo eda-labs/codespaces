@@ -54,8 +54,8 @@ patch-codespaces-engineconfig: | $(YQ) $(KPT_PKG) ## Patch the EngineConfig mani
 .PHONY: configure-try-eda-params
 configure-try-eda-params: | $(BASE) $(BUILD) $(KPT) $(KPT_SETTERS_TRY_EDA_FILE) patch-codespaces-engineconfig ## Configure parameters specific to try-eda
 
-.PHONY: ls-ways-to-reach-api-server
-ls-ways-to-reach-api-server: configure-codespaces-auth-client
+# .PHONY: ls-ways-to-reach-api-server
+# ls-ways-to-reach-api-server: configure-codespaces-auth-client
 
 .PHONY: configure-codespaces-auth-client
 configure-codespaces-auth-client: | $(KUBECTL) ## Configure Keycloak auth client redirect base for GitHub Codespaces
